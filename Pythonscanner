@@ -1,0 +1,30 @@
+import time
+from pynput import mouse
+
+# Variables to store coordinates
+start_pos = None
+end_pos = None
+is_defining = False  # To track whether we're in the defining stage
+
+# Function to handle mouse click
+def on_click(x, y, button, pressed):
+    global start_pos, end_pos, is_defining
+    if pressed and not is_defining:  # Start defining on first click
+        start_pos = (x, y)
+        is_defining = True
+        print(f"Defining started at: {start_pos}")
+    elif pressed and is_defining:  # End defining on the second click
+        end_pos = (x, y)
+        print(f"Defining ended at: {end_pos}")
+        width = abs(end_pos[0] - start_pos[0])
+        height = abs(end_pos[1] - start_pos[1])
+        print(f"Dimensions of selected area: Width={width}, Height={height}")
+        return False  # Stop listener
+
+def main():
+    print("Click to start defining the area. Click again to end.")
+    with mouse.Listener(on_click=on_click) as listener:
+        listener.join()
+
+if __name__ == "__main__":
+    main()
